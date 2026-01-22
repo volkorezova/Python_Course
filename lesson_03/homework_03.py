@@ -1,5 +1,3 @@
-from lesson_01.homework_01 import total_price
-
 alice_in_wonderland = ('"Would you tell me, please, which way I ought to go from here?"\n'
                        '"That depends a good deal on where you want to get to," said the Cat.\n'
                        '"I don\'t much care where ——" said Alice.\n'
