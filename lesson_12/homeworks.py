@@ -11,6 +11,16 @@ class Student:
         self.average_grade = kwargs.get('average_grade')
 
     def change_grade(self, grade=None):
+        if grade is None:
+            self.average_grade = None
+            return
+
+        if not isinstance(grade, (int, float)):
+            raise TypeError("Grade must be a number")
+
+        if grade < 0:
+            raise ValueError('Grade cannot be negative')
+
         self.average_grade = grade
         print(f"Середній бал для {self.name} змінено на {grade}")
 

@@ -35,14 +35,27 @@ class TestStudent(TestCase):
         self.assertEqual(s.average_grade, 15)
 
     def test_grade_change_negative(self):
+        expected_message = "Grade cannot be negative"
         s = Student(name='Anna', surname='Petrova', age=22, average_grade=12)
-        s.change_grade(-5)
-        self.assertEqual(s.average_grade, -5)
+
+        with self.assertRaises(ValueError) as context:
+            s.change_grade(-5)
+
+        self.assertEqual(expected_message, str(context.exception))
 
     def test_grade_change_none(self):
-            s = Student(name='Anna', surname='Petrova', age=22, average_grade=12)
-            s.change_grade()
-            self.assertIsNone(s.average_grade)
+        s = Student(name='Anna', surname='Petrova', age=22, average_grade=12)
+        s.change_grade()
+        self.assertIsNone(s.average_grade)
+
+    def test_grade_change_invalid_type(self):
+        expected_message = "Grade must be a number"
+        s = Student(name='Anna', surname='Petrova', age=22, average_grade=13)
+
+        with self.assertRaises(TypeError) as context:
+            s.change_grade("A+-1")
+
+        self.assertEqual(expected_message, str(context.exception))
 
 class TestSumEvenNumbers(TestCase):
     def test_sum_even_numbers_basic(self):
@@ -58,4 +71,4 @@ class TestSumEvenNumbers(TestCase):
         self.assertEqual(sum_even_numbers([2, 4, 6, 8]), 20)
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
