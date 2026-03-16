@@ -15,6 +15,7 @@ __author__ = 'Bhuvan Gandhi'
 __license__ = 'MIT'
 
 full_path = lambda filename: abspath(join(dirname(__file__), filename))
+current_person_row = []
 
 def get_id(length = 6, seq_number = None, step = 1, prefix = None, postfix = None):
 	generated_id = ""
@@ -33,65 +34,35 @@ def get_id(length = 6, seq_number = None, step = 1, prefix = None, postfix = Non
 		generated_id += postfix
 	return generated_id
 
-def get_first_name(gender = None):
-	firstNameFile = csv.reader(open(full_path('data.csv'), 'r'))
-	filteredData = []
-	if gender == None:
-		for data in firstNameFile:
-			if data[0] != '':
-				filteredData.append(data)
-	else:
-		if gender.lower() == "male":
-			for data in firstNameFile:
-				if data[0] != '':
-					if(data[2] == "male"):
-						filteredData.append(data)
-		elif gender.lower() == "female":
-			for data in firstNameFile:
-				if data[0] != '':
-					if(data[2] == "female"):
-						filteredData.append(data)
-		else:
-			raise ValueError("Enter gender male or female.")
-	return choice(filteredData)[0]
+def get_first_name(gender=None):
+	global current_person_row
+
+	with open(full_path('data.csv'), 'r', encoding='utf-8') as f:
+		reader = csv.reader(f)
+		next(reader)
+
+		rows = [row for row in reader if row and row[0]]
+	current_person_row = choice(rows)
+	return current_person_row[0]
 
 def get_last_name():
-	lastNameFile = csv.reader(open(full_path('data.csv'), 'r'))
-	filteredData = []
-	for data in lastNameFile:
-		if data[1] != '':
-			filteredData.append(data[1])
-	return choice(filteredData)
+	global current_person_row
+	if current_person_row:
+		return current_person_row[1]
+	return ""
 
-def get_gender(first_name):
-	firstNameFile = csv.reader(open(full_path('data.csv'), 'r'))
-	gender = ""
-	for data in firstNameFile:
-		if data[0] != '' and data[0] == first_name:
-			gender = data[2]
-			break
-	return gender
+def get_gender():
+	global current_person_row
+	if current_person_row:
+		return current_person_row[2]
+	return ""
 
-def get_country(first_name = None):
-	countryFile = csv.reader(open(full_path('data.csv'), 'r'))
-	country = ""
-	if first_name != None:
-		for data in countryFile:
-			if data[0] != '' and data[0] == first_name:
-				country = data[3]
-				break
-		if country == "":
-			print("Specified user data is not available. Tip: Generate random country.")
-	else:
-		filteredData = []
-		for data in countryFile:
-			if data[12] != '':
-				filteredData.append(data[12])
-		country = choice(filteredData)
-	return country
+def get_country():
+	return "India"
 
 def get_full_name(gender = None):
-	return get_first_name(gender) + " " + get_last_name()
+	first_name = get_first_name(gender)
+	return f"{first_name} {get_last_name(first_name)}"
 
 def get_otp(length = 6, digit = True, alpha = True, lowercase = True, uppercase = True):
 	lwrChars = "qwertyuioplkjhgfdsazxcvbnm"
@@ -114,7 +85,7 @@ def get_otp(length = 6, digit = True, alpha = True, lowercase = True, uppercase 
 		raise ValueError("From parameters 'digit' and 'alpha' anyone must be True.")
 
 def get_formatted_datetime(outFormat, strDate, strFormat = "%d-%m-%Y %H:%M:%S"):
-    return datetime.strptime(strDate, strFormat).strftime(outFormat)
+	return datetime.strptime(strDate, strFormat).strftime(outFormat)
 
 def get_email(prsn = None):
 	domains = ["gmail", "yahoo", "hotmail", "express", "yandex", "nexus", "online", "omega", "institute", "finance", "company", "corporation", "community"]
@@ -258,20 +229,20 @@ def get_birthdate(startAge = None, endAge = None, _format = "%d %b, %Y"):
 	return datetime.fromtimestamp(randrange(int(endTs), int(startTs))).strftime(_format)
 
 def get_address():
-	full_addr = []
-	addrParam = ['street', 'landmark', 'area', 'city', 'state', 'country', 'pincode']
-	for i in range(5,12):
-		addrFile = csv.reader(open(full_path('data.csv'), 'r'))
-		allAddrs = []
-		for addr in addrFile:
-			try:
-				if addr[i] != '':
-					allAddrs.append(addr[i])
-			except:
-				pass
-		full_addr.append(choice(allAddrs))
-	full_addr = dict(zip(addrParam, full_addr))
-	return full_addr
+	global current_person_row
+
+	if not current_person_row:
+		return {}
+
+	return {
+		"street": current_person_row[4],
+        "landmark": current_person_row[5],
+        "area": current_person_row[6],
+        "city": current_person_row[7],
+        "state": current_person_row[8],
+        "country": "India",
+        "pincode": current_person_row[9]
+    }
 
 def get_hobbies():
 	hobbiesFile = csv.reader(open(full_path('data.csv'), 'r'))
@@ -293,8 +264,8 @@ class Person:
 		self.birthdate = get_birthdate()
 		self.phone = get_phone_number()
 		self.email = get_email(self)
-		self.gender = get_gender(firstName)
-		self.country = get_country(firstName)
+		self.gender = get_gender()
+		self.country = get_country()
 		self.paswd = random_password()
 		self.hobbies = get_hobbies()
 		self.address = get_address()
