@@ -6,10 +6,10 @@ def get_connection():
     for _ in range(10):  # retry щоб контейнер дочекався БД
         try:
             return psycopg2.connect(
-                dbname=os.getenv("POSTGRES_DB"),
-                user=os.getenv("POSTGRES_USER"),
-                password=os.getenv("POSTGRES_PASSWORD"),
-                host=os.getenv("DB_HOST"),
+                dbname="testdb",
+                user="user",
+                password="password",
+                host="localhost",
                 port="5432"
             )
         except:
