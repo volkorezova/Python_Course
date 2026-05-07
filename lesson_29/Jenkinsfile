@@ -20,7 +20,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'python3 -m pytest lesson_29/tests --alluredir=lesson_29/allure-results'
+                sh 'PYTHONPATH=. python3 -m pytest lesson_29/tests --alluredir=lesson_29/allure-results'
             }
         }
 
