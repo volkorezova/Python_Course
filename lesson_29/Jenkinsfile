@@ -1,21 +1,26 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11'
-        }
-    }
+    agent any
 
     stages {
 
+        stage('Install Python and Pip') {
+            steps {
+                sh '''
+                apt-get update
+                apt-get install -y python3 python3-pip
+                '''
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r lesson_29/requirements.txt'
+                sh 'pip3 install -r lesson_29/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'python -m pytest lesson_29/tests --alluredir=lesson_29/allure-results'
+                sh 'python3 -m pytest lesson_29/tests --alluredir=lesson_29/allure-results'
             }
         }
 
