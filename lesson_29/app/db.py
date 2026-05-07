@@ -9,7 +9,7 @@ def get_connection():
                 dbname="testdb",
                 user="user",
                 password="password",
-                host="localhost",
+                host="host.docker.internal",
                 port="5432"
             )
         except:
