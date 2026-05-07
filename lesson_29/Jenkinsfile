@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Install Python and Pip') {
+            steps {
+                sh 'apt-get update'
+                sh 'apt-get install -y python3 python3-pip'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip3 install --break-system-packages -r lesson_29/requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'PYTHONPATH=. python3 -m pytest lesson_29/tests --alluredir=lesson_29/allure-results'
+            }
+        }
+
+        stage('Archive Results') {
+            steps {
+                archiveArtifacts artifacts: 'lesson_29/allure-results/**', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        always {
+            emailext(
+                subject: "Jenkins Build: ${currentBuild.currentResult}",
+                body: "Build finished with status: ${currentBuild.currentResult}",
+                to: "tanya.volkorezova@gmail.com"
+            )
+        }
+    }
+}
