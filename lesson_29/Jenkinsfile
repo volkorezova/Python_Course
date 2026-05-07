@@ -5,19 +5,19 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'py -m pip install -r requirements.txt'
+                sh 'pip install -r lesson_29/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'py -m pytest --alluredir=allure-results'
+                sh 'pytest lesson_29/tests --alluredir=lesson_29/allure-results'
             }
         }
 
         stage('Archive Results') {
             steps {
-                archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
+                archiveArtifacts artifacts: 'lesson_29/allure-results/**', fingerprint: true
             }
         }
     }
