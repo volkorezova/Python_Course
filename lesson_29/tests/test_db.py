@@ -1,5 +1,5 @@
 import allure
-from app.db import get_connection
+from lesson_29.app.db import get_connection
 
 @allure.feature("Database connection")
 def test_connection():
